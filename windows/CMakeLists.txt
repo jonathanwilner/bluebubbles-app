@@ -40,6 +40,9 @@ endfunction()
 
 set(FLUTTER_MANAGED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/flutter")
 
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/objectbox_deps.cmake)
+prepare_objectbox_native_libs()
+
 # Flutter library and tool build rules.
 add_subdirectory(${FLUTTER_MANAGED_DIR})
 
@@ -49,6 +52,15 @@ add_subdirectory("runner")
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
 include(flutter/generated_plugins.cmake)
+
+# Ensure the ObjectBox runtime is bundled even when the plugin skipped the
+# download step because we pre-populated the cache variables above.
+if(WIN32 AND DEFINED OBJECTBOX_NATIVE_DLL)
+  list(FIND PLUGIN_BUNDLED_LIBRARIES "${OBJECTBOX_NATIVE_DLL}" _objectbox_index)
+  if(_objectbox_index EQUAL -1)
+    list(APPEND PLUGIN_BUNDLED_LIBRARIES "${OBJECTBOX_NATIVE_DLL}")
+  endif()
+endif()
 
 
 # === Installation ===
