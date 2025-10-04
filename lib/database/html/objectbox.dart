@@ -1,4 +1,6 @@
 // ignore_for_file: camel_case_types
+import 'dart:async';
+
 import 'package:bluebubbles/database/html/handle.dart';
 
 /// READ: Dummy file to allow objectbox related code to compile on Web. We use
@@ -46,6 +48,28 @@ class Order {
   static const nullsAsZero = 16;
 }
 
+class _Condition {
+  const _Condition();
+
+  _Condition and(_Condition other) => this;
+
+  _Condition or(_Condition other) => this;
+
+  _Condition not() => this;
+}
+
+typedef Condition<T> = _Condition;
+
+class QueryBuilder<T> {
+  QueryBuilder<T> order(dynamic property, {int flags = 0}) => this;
+
+  QueryBuilder<T> link(dynamic relation, [Condition<dynamic>? condition]) => this;
+
+  Query<T> build() => Query<T>();
+
+  Stream<Query<T>> watch({bool triggerImmediately = false}) => const Stream<Query<T>>.empty();
+}
+
 class Box<T> {
   int put(T object, {PutMode mode = PutMode.put}) => throw Exception('Unsupported Platform');
 
@@ -75,7 +99,7 @@ class Box<T> {
 
   bool isEmpty() => throw Exception('Unsupported Platform');
 
-  dynamic query([dynamic qc]) => throw Exception('Unsupported Platform');
+  QueryBuilder<T> query([Condition<T>? qc]) => QueryBuilder<T>();
 }
 
 class ToOne<EntityT> {
@@ -140,29 +164,45 @@ class Query<T> {
   }
 }
 
-class Temp {
+class Temp extends _Condition {
   dynamic add(dynamic thing) {
     return this;
   }
 
-  dynamic equals(dynamic thing) {
-    return this;
+  Condition<dynamic> equals(dynamic thing) {
+    return const _Condition();
   }
 
-  dynamic oneOf(dynamic thing) {
-    return this;
+  Condition<dynamic> oneOf(dynamic thing) {
+    return const _Condition();
   }
 
-  dynamic contains(dynamic thing) {
-    return this;
+  Condition<dynamic> contains(dynamic thing, {bool caseSensitive = true}) {
+    return const _Condition();
   }
 
-  dynamic isNull() {
-    return this;
+  Condition<dynamic> isNull() {
+    return const _Condition();
   }
 
-  dynamic notNull() {
-    return this;
+  Condition<dynamic> notNull() {
+    return const _Condition();
+  }
+
+  Condition<dynamic> greaterOrEqual(dynamic thing) {
+    return const _Condition();
+  }
+
+  Condition<dynamic> greaterThan(dynamic thing) {
+    return const _Condition();
+  }
+
+  Condition<dynamic> lessOrEqual(dynamic thing) {
+    return const _Condition();
+  }
+
+  Condition<dynamic> lessThan(dynamic thing) {
+    return const _Condition();
   }
 }
 
