@@ -1,0 +1,19 @@
+{
+  "apiType": "stageMode",
+  "buildOption": {
+    "sourceType": [
+      "ets"
+    ]
+  },
+  "targets": {
+    "default": {
+      "runtimeOS": "HarmonyOS",
+      "buildMode": "debug",
+      "products": [
+        "default"
+      ],
+      "compileSdkVersion": "4.0.10.9",
+      "compatibleSdkVersion": "4.0.10.9"
+    }
+  }
+}

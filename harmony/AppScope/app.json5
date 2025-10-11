@@ -1,0 +1,13 @@
+{
+  "app": {
+    "bundleName": "com.bluebubbles.app",
+    "vendor": "BlueBubbles",
+    "version": {
+      "code": 1,
+      "name": "1.0.0"
+    },
+    "apiTargetVersion": 12,
+    "apiCompatibleVersion": 12,
+    "bundleType": "app"
+  }
+}

@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart' hide Condition;
 // (needed when generating objectbox model code)
 // ignore: unnecessary_import
-import 'package:objectbox/objectbox.dart';
+import 'package:bluebubbles/database/hive_compat/objectbox.dart';
 import 'package:tuple/tuple.dart';
 
 @Entity()
