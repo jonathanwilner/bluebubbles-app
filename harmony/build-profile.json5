@@ -1,5 +1,14 @@
 {
   "app": {
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "buildMode": "debug",
+        "compileSdkVersion": "4.0.10.9",
+        "compatibleSdkVersion": "4.0.10.9"
+      }
+    ],
     "signingConfigs": [
       {
         "name": "default",
@@ -10,19 +19,6 @@
           "keyAlias": "",
           "keyPassword": ""
         }
-      }
-    ],
-    "products": [
-      {
-        "name": "default",
-        "signingConfig": "default",
-        "buildMode": "debug",
-        "modules": [
-          {
-            "name": "entry",
-            "target": "default"
-          }
-        ]
       }
     ]
   }

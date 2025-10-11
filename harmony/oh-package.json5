@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@ohos/hvigor-ohos-plugin": "^4.0.10",
+    "@ohos/hvigor-ohos-plugin": "^4.0.0",
     "@ohos/tsplugin": "^1.0.0"
   }
 }

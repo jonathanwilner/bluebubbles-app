@@ -1,13 +1,13 @@
 # HarmonyOS Next Client
 
-This directory now contains a minimal stage-based HarmonyOS Next 6.0 project laid out exactly like the template produced by DevEco Studio. The ArkTS sources still mirror the BlueBubbles UX and reuse the same REST endpoints as the Flutter client, but the surrounding build metadata was simplified so the project can be opened with **File → Open** without any additional manual configuration.
+This directory now contains a fully structured stage-based HarmonyOS Next 6.0 project that you can import directly into DevEco Studio. The ArkTS code reimplements the BlueBubbles UX with native ArkUI components while reusing the same REST endpoints as the Flutter client, so the macOS BlueBubbles server continues to work without changes.
 
 ## Project layout
 
 ```
 harmony/
 ├── AppScope/app.json5          # Application level manifest
-├── build-profile.json5         # Signing placeholders & module mapping
+├── build-profile.json5         # Signing placeholders & SDK versions
 ├── hvigorconfig.json5          # Build tool configuration
 ├── hvigorfile.ts               # Top level hvigor entry point
 ├── oh-package.json5            # Project level dependencies
@@ -22,7 +22,7 @@ harmony/
             └── resources/      # App strings, media, and theme colors
 ```
 
-The `module.json5` file lives under `entry/src/main` to match the directory layout expected by DevEco Studio. The stage module declares `EntryAbility` as the main element and configures home screen skills so the simulator can launch it just like any native HarmonyOS app.
+The `module.json5` file was relocated under `entry/src/main` to match the directory layout expected by DevEco Studio. The stage module declares `EntryAbility` as the main element and configures home screen skills so the simulator can launch it just like any native HarmonyOS app.
 
 ## Importing into DevEco Studio
 
