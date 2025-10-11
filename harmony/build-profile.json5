@@ -1,0 +1,25 @@
+{
+  "app": {
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "buildMode": "debug",
+        "compileSdkVersion": "4.0.10.9",
+        "compatibleSdkVersion": "4.0.10.9"
+      }
+    ],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "storeFile": "",
+          "storePassword": "",
+          "keyAlias": "",
+          "keyPassword": ""
+        }
+      }
+    ]
+  }
+}

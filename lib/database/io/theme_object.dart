@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 // (needed when generating objectbox model code)
 // ignore: unnecessary_import
-import 'package:objectbox/objectbox.dart';
+import 'package:bluebubbles/database/hive_compat/objectbox.dart';
 
 @Deprecated('Use ThemeStruct instead')
 @Entity()

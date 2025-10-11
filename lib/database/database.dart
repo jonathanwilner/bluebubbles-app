@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:bluebubbles/helpers/helpers.dart';
 import 'package:bluebubbles/database/models.dart';
+import 'package:bluebubbles/database/hive_compat/adapters.dart';
+import 'package:bluebubbles/database/hive_compat/box.dart';
+import 'package:bluebubbles/database/hive_compat/store.dart';
 import 'package:bluebubbles/services/services.dart';
 import 'package:bluebubbles/utils/logger/logger.dart';
 import 'package:collection/collection.dart';
@@ -13,18 +16,17 @@ class Database {
   static int version = 5;
 
   static late final Store store;
-  static late final Box<Attachment> attachments;
-  static late final Box<Chat> chats;
-  static late final Box<Contact> contacts;
-  static late final Box<FCMData> fcmData;
-  static late final Box<Handle> handles;
-  static late final Box<Message> messages;
-  static late final Box<ScheduledMessage> scheduledMessages;
-  static late final Box<ThemeStruct> themes;
-  static late final Box<ThemeEntry> themeEntries;
+  static late final HiveCollectionBox<Attachment> attachments;
+  static late final HiveCollectionBox<Chat> chats;
+  static late final HiveCollectionBox<Contact> contacts;
+  static late final HiveCollectionBox<FCMData> fcmData;
+  static late final HiveCollectionBox<Handle> handles;
+  static late final HiveCollectionBox<Message> messages;
+  static late final HiveCollectionBox<ThemeStruct> themes;
+  static late final HiveCollectionBox<ThemeEntry> themeEntries;
 
   // ignore: deprecated_member_use_from_same_package
-  static late final Box<ThemeObject> themeObjects;
+  static late final HiveCollectionBox<ThemeObject> themeObjects;
 
   static final Completer<void> initComplete = Completer();
 
@@ -39,16 +41,7 @@ class Database {
     }
 
     try {
-      Database.attachments = store.box<Attachment>();
-      Database.chats = store.box<Chat>();
-      Database.contacts = store.box<Contact>();
-      Database.fcmData = store.box<FCMData>();
-      Database.handles = store.box<Handle>();
-      Database.messages = store.box<Message>();
-      Database.themes = store.box<ThemeStruct>();
-      Database.themeEntries = store.box<ThemeEntry>();
-      // ignore: deprecated_member_use_from_same_package
-      themeObjects = store.box<ThemeObject>();
+      await _initializeBoxes();
 
       if (!ss.settings.finishedSetup.value) {
         Database.attachments.removeAll();
@@ -62,7 +55,7 @@ class Database {
         themeObjects.removeAll();
       }
     } catch (e, s) {
-      Logger.error("Failed to setup ObjectBox boxes!", error: e, trace: s);
+      Logger.error("Failed to setup Hive-backed boxes!", error: e, trace: s);
     }
 
     try {
@@ -91,29 +84,38 @@ class Database {
     await initComplete.future;
   }
 
-  static Future<void> _initDatabaseMobile({bool? storeOpenStatus}) async {
-    Directory objectBoxDirectory = Directory(join(fs.appDocDir.path, 'objectbox'));
-    final isStoreOpen = storeOpenStatus ?? Store.isOpen(objectBoxDirectory.path);
-
+  static Future<void> _initDatabaseMobile() async {
+    final Directory objectBoxDirectory = Directory(join(fs.appDocDir.path, 'objectbox'));
     try {
-      if (isStoreOpen) {
-        Logger.info("Attempting to attach to an existing ObjectBox store...");
-        store = Store.attach(getObjectBoxModel(), objectBoxDirectory.path);
-        Logger.info("Successfully attached to an existing ObjectBox store");
-      } else {
-        Logger.info("Opening new ObjectBox store from path: ${objectBoxDirectory.path}");
-        store = await openStore(directory: objectBoxDirectory.path);
-      }
+      objectBoxDirectory.createSync(recursive: true);
+      Logger.info("Opening Hive store from path: ${objectBoxDirectory.path}");
+      store = await openStore(directory: objectBoxDirectory.path);
     } catch (e, s) {
-      Logger.error("Failed to open ObjectBox store!", error: e, trace: s);
-
-      if (e.toString().contains("another store is still open using the same path")) {
-        Logger.info("Retrying to attach to an existing ObjectBox store");
-        await _initDatabaseMobile(storeOpenStatus: true);
-      }
+      Logger.error("Failed to open Hive store!", error: e, trace: s);
     }
   }
 
+
+  static Future<void> _initializeBoxes() async {
+    attachments = await HiveCollectionBox.open(const AttachmentAdapter());
+    store.registerBox<Attachment>(attachments);
+    chats = await HiveCollectionBox.open(const ChatAdapter());
+    store.registerBox<Chat>(chats);
+    contacts = await HiveCollectionBox.open(const ContactAdapter());
+    store.registerBox<Contact>(contacts);
+    fcmData = await HiveCollectionBox.open(const FcmDataAdapter());
+    store.registerBox<FCMData>(fcmData);
+    handles = await HiveCollectionBox.open(const HandleAdapter());
+    store.registerBox<Handle>(handles);
+    messages = await HiveCollectionBox.open(const MessageAdapter());
+    store.registerBox<Message>(messages);
+    themes = await HiveCollectionBox.open(const ThemeAdapter());
+    store.registerBox<ThemeStruct>(themes);
+    themeEntries = await HiveCollectionBox.open(const ThemeEntryAdapter());
+    store.registerBox<ThemeEntry>(themeEntries);
+    themeObjects = await HiveCollectionBox.open(const ThemeObjectAdapter());
+    store.registerBox<ThemeObject>(themeObjects);
+  }
   static Future<void> _initDatabaseDesktop() async {
     Directory objectBoxDirectory = Directory(join(fs.appDocDir.path, 'objectbox'));
 
@@ -129,7 +131,7 @@ class Database {
         await ss.prefs.remove('custom-path');
       }
 
-      Logger.info("Opening ObjectBox store from path: ${objectBoxDirectory.path}");
+      Logger.info("Opening Hive store from path: ${objectBoxDirectory.path}");
       store = await openStore(directory: objectBoxDirectory.path);
     } catch (e, s) {
       if (Platform.isLinux) {
@@ -139,7 +141,7 @@ class Database {
         exit(0);
       }
 
-      Logger.error("Failed to initialize desktop database!", error: e, trace: s);
+      Logger.error("Failed to initialize Hive database!", error: e, trace: s);
     }
   }
 

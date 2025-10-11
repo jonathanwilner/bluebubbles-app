@@ -1,0 +1,38 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "HarmonyOS stage module for BlueBubbles",
+    "package": "com.bluebubbles.app",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "HarmonyOS entry ability for BlueBubbles",
+        "icon": "$media:app_icon",
+        "label": "$string:app_name",
+        "startWindowIcon": "$media:app_icon",
+        "startWindowBackground": "$color:start_window_background",
+        "skills": [
+          {
+            "actions": [
+              "action.system.home"
+            ],
+            "entities": [
+              "entity.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "resources": {
+      "base": "src/main/resources"
+    }
+  }
+}

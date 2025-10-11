@@ -14,7 +14,7 @@ import 'package:get/get.dart' hide Response;
 import 'package:metadata_fetch/metadata_fetch.dart';
 // (needed when generating objectbox model code)
 // ignore: unnecessary_import
-import 'package:objectbox/objectbox.dart';
+import 'package:bluebubbles/database/hive_compat/objectbox.dart';
 import 'package:universal_io/io.dart';
 
 /// Async method to get attachments from objectbox
