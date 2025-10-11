@@ -19,7 +19,7 @@ import 'package:get/get.dart';
 import 'package:sliding_up_panel2/sliding_up_panel2.dart';
 import 'package:tuple/tuple.dart';
 import 'package:bluebubbles/database/html/objectbox_query_stub.dart'
-    if (dart.library.io) 'package:objectbox/objectbox.dart' as obx;
+    if (dart.library.io) 'package:bluebubbles/database/hive_compat/objectbox.dart' as obx;
 
 class SearchResult {
   final String search;
