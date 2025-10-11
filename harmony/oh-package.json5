@@ -1,0 +1,11 @@
+{
+  "name": "bluebubbles-harmony",
+  "version": "1.0.0",
+  "description": "BlueBubbles HarmonyOS Next stage project",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@ohos/hvigor-ohos-plugin": "^4.0.0",
+    "@ohos/tsplugin": "^1.0.0"
+  }
+}
