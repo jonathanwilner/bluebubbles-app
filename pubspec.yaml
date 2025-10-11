@@ -129,8 +129,8 @@ dependencies:
   network_info_plus: ^6.0.1
   network_tools: ^5.0.2
   numberpicker: ^2.1.2
-  objectbox: ^4.0.1
-  objectbox_flutter_libs: any
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
   on_exit: ^1.0.0
   open_filex: ^4.4.0
   package_info_plus: ^8.0.0
@@ -217,7 +217,6 @@ dev_dependencies:
   flutter_native_splash: ^2.4.0
   flutter_lints: ^4.0.0
   peanut: ^5.0.0
-  objectbox_generator: any
   flutter_test:
     sdk: flutter
 

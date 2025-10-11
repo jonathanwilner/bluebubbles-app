@@ -1,0 +1,21 @@
+
+{
+  "module": {
+    "package": "com.bluebubbles.app",
+    "name": "entry",
+    "type": "entry",
+    "srcPath": "src/main/ets",
+    "resources": {
+      "base": "src/main/resources"
+    },
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "entryability/EntryAbility.ets",
+        "description": "HarmonyOS entry ability for BlueBubbles",
+        "icon": "$media:app_icon",
+        "label": "$string:app_name"
+      }
+    ]
+  }
+}
