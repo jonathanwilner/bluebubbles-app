@@ -37,6 +37,8 @@ class FullscreenVideo extends StatefulWidget {
 }
 
 class _FullscreenVideoState extends OptimizedState<FullscreenVideo> with AutomaticKeepAliveClientMixin {
+  static bool get _isWindowsDesktop => !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+
   Timer? hideOverlayTimer;
 
   late VideoController videoController;
@@ -55,10 +57,19 @@ class _FullscreenVideoState extends OptimizedState<FullscreenVideo> with Automat
       muted.value = widget.mute!.value;
     }
 
+    if (_isWindowsDesktop) {
+      // Skip initializing media_kit on Windows to avoid libGL dependencies.
+      return;
+    }
+
     initControllers();
   }
 
   void initControllers() async {
+    if (_isWindowsDesktop) {
+      return;
+    }
+
     if (widget.videoController != null) {
       videoController = widget.videoController!;
     } else {
@@ -108,9 +119,9 @@ class _FullscreenVideoState extends OptimizedState<FullscreenVideo> with Automat
   void dispose() {
     hasDisposed = true;
     hideOverlayTimer?.cancel();
-    
+
     // Only dispose the player if one was not passed in (via a controller)
-    if (widget.videoController == null) {
+    if (widget.videoController == null && !_isWindowsDesktop) {
       videoController.player.dispose();
     }
 
@@ -118,6 +129,9 @@ class _FullscreenVideoState extends OptimizedState<FullscreenVideo> with Automat
   }
 
   void refreshAttachment() {
+    if (_isWindowsDesktop) {
+      return;
+    }
     showSnackbar('In Progress', 'Redownloading attachment. Please wait...');
     as.redownloadAttachment(widget.attachment, onComplete: (file) async {
       if (hasDisposed) return;
@@ -144,6 +158,42 @@ class _FullscreenVideoState extends OptimizedState<FullscreenVideo> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     final RxBool _hover = false.obs;
+    if (_isWindowsDesktop) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.play_disabled,
+                  size: 72,
+                  color: context.theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Video playback is not supported on Windows builds of BlueBubbles.',
+                  textAlign: TextAlign.center,
+                  style: context.theme.textTheme.titleMedium?.copyWith(
+                    color: context.theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Download the file to view it with an external application.',
+                  textAlign: TextAlign.center,
+                  style: context.theme.textTheme.bodyMedium?.copyWith(
+                    color: context.theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     return Obx(
       () => Scaffold(
         backgroundColor: Colors.black,

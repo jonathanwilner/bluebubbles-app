@@ -182,6 +182,8 @@ class MuteButton extends StatelessWidget {
 }
 
 class _VideoPlayerState extends OptimizedState<VideoPlayer> with AutomaticKeepAliveClientMixin {
+  static bool get _isWindowsDesktop => !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
+
   Attachment get attachment => widget.attachment;
 
   PlatformFile get file => widget.file;
@@ -200,10 +202,12 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer> with AutomaticKeepAl
 
   @override
   void initState() {
+    super.initState();
+
     VideoController? cachedController = cvController?.videoPlayers[attachment.guid];
     thumbnail = cvController?.imageData[attachment.guid];
 
-    if (cachedController != null) {
+    if (cachedController != null && !_isWindowsDesktop) {
       videoController = cachedController;
       aspectRatio.value = videoController!.aspectRatio;
 
@@ -218,11 +222,19 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer> with AutomaticKeepAl
       });
     }
 
+    if (_isWindowsDesktop) {
+      // Avoid initializing video playback on Windows builds where libGL is unavailable.
+      return;
+    }
+
     initializeController();
-    super.initState();
   }
 
   Future<void> initializeController() async {
+    if (_isWindowsDesktop) {
+      return;
+    }
+
     late final Media media;
     if (widget.file.path == null) {
       final blob = html.Blob([widget.file.bytes]);
@@ -293,6 +305,9 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer> with AutomaticKeepAl
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    if (_isWindowsDesktop) {
+      return _buildWindowsPlaceholder(context);
+    }
     if (videoController != null) {
       return MouseRegion(
         onEnter: (event) => showPlayPauseOverlay.value = true,
@@ -484,6 +499,44 @@ class _VideoPlayerState extends OptimizedState<VideoPlayer> with AutomaticKeepAl
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget _buildWindowsPlaceholder(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 160),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.theme.colorScheme.surfaceVariant.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.play_disabled,
+            size: 48,
+            color: context.theme.colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Video playback is not available on Windows builds.',
+            textAlign: TextAlign.center,
+            style: context.theme.textTheme.bodyMedium?.copyWith(
+              color: context.theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Download the attachment to view it externally.',
+            textAlign: TextAlign.center,
+            style: context.theme.textTheme.bodySmall?.copyWith(
+              color: context.theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class FullscreenButton extends StatelessWidget {
